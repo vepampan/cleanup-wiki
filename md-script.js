@@ -8,6 +8,12 @@ const startDir = path.join(rootDir, targetDir);
 
 const dirs_to_del = new Set();
 mark_dirs_to_del(startDir)
+const doc_filetypes = [
+    ".md",
+    ".png",
+    ".jpeg",
+    ".jpg"
+]
 
 function mark_dirs_to_del(dir) {
 
@@ -25,11 +31,16 @@ function mark_dirs_to_del(dir) {
                 }
             })
 
-        let no_md = true;
+        let no_doc_files = true;
 
         for (file of files) {
-            if (file.endsWith(".md")) {
-                no_md = false;
+            doc_filetypes.forEach(filetype => {
+                if (file.endsWith(filetype)) {
+                    no_doc_files = false;
+                }
+            })
+
+            if (!no_doc_files) {
                 break;
             }
         }
@@ -39,17 +50,17 @@ function mark_dirs_to_del(dir) {
             mark_dirs_to_del(path.join(dir, child_dir_nam));
         }
 
-        let no_md_child_dirs = true;
+        let no_doc_files_child_dirs = true;
 
         for (var child_dir_name of child_dirs) {
             const child_dir = path.join(dir, child_dir_name);
             if (!dirs_to_del.has(child_dir)) {
-                no_md_child_dirs = false;
+                no_doc_files_child_dirs = false;
                 break;
             }
         }
 
-        if (no_md && no_md_child_dirs) {
+        if (no_doc_files && no_doc_files_child_dirs) {
             dirs_to_del.add(dir)
 
             for (var child_dir_name of child_dirs) {
